@@ -5,16 +5,14 @@ output:
     keep_md: false
 ---
 
-```{r setoptions,echo=FALSE}
-library(knitr)
-opts_chunk$set(echo=TRUE)
-```
+
 
 First Fork/clone the GitHub repository created for this assignment into RepData_PeerAssessment1 folder.
 
 ## Loading and preprocessing the data
 
-```{r preprocessing}
+
+```r
 setwd("c:\\Data\\library\\R\\ReproducibleReaserch\\RepData_PeerAssessment1")
 
 unzip("activity.zip")
@@ -26,7 +24,8 @@ activity$date <- as.Date(activity$date, format="%Y-%m-%d")
 
 ## What is mean total number of steps taken per day?
 
-```{r mean}
+
+```r
 totSteps <- aggregate(activity$steps, list(activity$date), sum)
 names(totSteps) <- c("date","steps")
 
@@ -35,27 +34,53 @@ totalStepsMedian <- median(totSteps$steps, na.rm=T)
 
 hist(totSteps$steps, col = "green", breaks = 20, 
      main="Total Steps per day", xlab="Total Steps")
+```
 
+![plot of chunk mean](figure/mean-1.png) 
+
+```r
 totalStepsMean
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 totalStepsMedian
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
-```{r activity pattern}
+
+```r
 totSteps2 <- aggregate(activity$steps,list(activity$interval),mean,na.rm=T)
 names(totSteps2) <- c("interval","steps")
 
 maxTotalStepsInterval <- totSteps2[totSteps2$steps==max(totSteps2$steps),]
 
 plot(totSteps2, type="l", main="Average daily activity pattern")
+```
 
+![plot of chunk activity pattern](figure/activity pattern-1.png) 
+
+```r
 maxTotalStepsInterval
+```
+
+```
+##     interval    steps
+## 104      835 206.1698
 ```
 
 ## Imputing missing values
 Replacing NAs with the rounded mean for equivalent 5-minute interval
-```{r missing values}
+
+```r
 activity3 <- activity
 totalMissingValues <- sum(is.na(activity3$steps))
 
@@ -71,18 +96,40 @@ totalStepsMean3 <- mean(totSteps3$steps, na.rm=T)
 totalStepsMedian3 <- median(totSteps3$steps, na.rm=T)
 
 totalMissingValues
+```
+
+```
+## [1] 2304
+```
+
+```r
 hist(totSteps3$steps, col = "green", breaks = 20, 
      main="Total Steps per day", xlab="Total Steps")
+```
 
+![plot of chunk missing values](figure/missing values-1.png) 
+
+```r
 totalStepsMean3
-totalStepsMedian3
+```
 
+```
+## [1] 10765.64
+```
+
+```r
+totalStepsMedian3
+```
+
+```
+## [1] 10762
 ```
 
 Imputing missing values using rounded means for equivalent 5-minute intervals does not have impact on the mean and median total number of steps taken per day. Also shape of the histogram is the same. The only difference is higher frequency on some values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekdays}
+
+```r
 activity3$daytype <- as.factor(ifelse(weekdays(activity3$date,abbreviate=T) %in% c("Sat","Sun"), 
                                       "weekend","weekday"))
 
@@ -97,8 +144,9 @@ names(totSteps4) <- c("interval","daytype","steps")
 library(lattice)
 xyplot(totSteps4$steps ~ totSteps4$interval|totSteps4$daytype,totSteps4,type="l",
        layout=c(1,2),xlab="Interval",ylab="Number of steps")
-
 ```
+
+![plot of chunk weekdays](figure/weekdays-1.png) 
 
 Morning activity is higher for weekdays (longer sleep probably?).
 
@@ -106,7 +154,5 @@ Midday activity is higher for weekends (leisure activity compared to more siting
 
 Evening activity is higher for weekends (some entertainment?). 
 
-```{r clean, echo=FALSE,results='hide'}
-file.remove("activity.csv")
-```
+
 
